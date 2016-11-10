@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>mdn canvas</title>
+		<style>
+			#canvas{				
+				border:1px solid #000;
+				position: absolute;
+				left:400px;
+				top:200px;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="canvas" width="450" height="450" >
+			.....
+		</canvas>
+	</body>
+	<script>
+	
+//		var canvas=document.getElementById('canvas');
+//		var ctx=canvas.getContext("2d");
+//		console.log(ctx);
+		//1.坐标系统
+		//2.路径
+		//3.描绘或者填充路径
+//		ctx.beginPath();
+//		ctx.moveTo(200,200);
+//		ctx.lineTo(300,300);
+//		ctx.lineTo(100,300);
+//		ctx.lineTo(200,200);
+//		ctx.closePath();
+//		
+//		ctx.fill();
+//		ctx.stroke();
+//1.坐标系统
+//2.路径
+//3.描绘或者填充路径
+//4.油漆概念
+//5.动画布(改变坐标系统)
+//6.保存画布状态和恢复画布状态
+//状态(只包含位置,旋转程度,缩放程度,画笔样式)
+//绝不会保存图形,只是画布和画笔状态
+//suve()  restore()
+//save()
+//restore() 
+//translate()
+  	
+//		ctx.beginPath();
+//		for(var i=0;i<34;i++){
+//			ctx.moveTo(15,15+i*30);
+//			ctx.lineTo(485,15+i*30);
+//			
+//			ctx.moveTo(15+i*30,15);
+//			ctx.lineTo(15+i*30,485);
+//		}		
+//		ctx.closePath();		
+//		ctx.stroke();
+//		
+//		function drawCirle(){
+//			ctx.beginPath();
+//			
+//		}
+//		var angle=0;
+//		function render(){
+//			ctx.clearRect(0,0,450,450);
+//			drawQipan();
+//			drawCircle();
+//			if(angle===360){
+//				clearInterval(timerId);
+//				
+//			}
+//			angle+=5;
+//			return arguments.callee;
+//		}
+//		var timerId=setInterval(render(),20)
+	var canvas = document.getElementById("canvas");
+	var ctx = canvas.getContext("2d");
+
+	//钟表
+	function Clock() {
+		ctx.save();
+		for(var i = 0; i <= 60; i++) {
+			ctx.beginPath();
+			if(i % 5 == 0) {
+				ctx.moveTo(0, -128);
+			} else {
+				ctx.moveTo(0, -140);
+			}
+			ctx.lineTo(0, -150);
+			ctx.rotate(Math.PI / 180 * 6);
+			ctx.closePath();
+			ctx.stroke();
+		}
+		ctx.restore();
+	}
+
+	/*Write Hours*/
+	function Hours() {
+		ctx.save();
+		var now = new Date();
+		var h = now.getHours();
+		var m = now.getMinutes();
+		var s = now.getSeconds();
+		var deg = ((h * 60 * 60 + m * 60 + s) / 120) * Math.PI / 180;
+		ctx.rotate(deg);
+		ctx.beginPath();
+		ctx.arc(0, 0, 15, 0, Math.PI * 2);
+		ctx.moveTo(0, 15);
+		ctx.lineTo(0, 15);
+		ctx.moveTo(0, -15);
+		ctx.lineTo(0, -80);
+		ctx.closePath();
+		ctx.stroke();
+		ctx.restore();
+	}
+
+	/*Write Minutes*/
+	function Minutes() {
+		ctx.save();
+		var now = new Date();
+		var m = now.getMinutes();
+		var s = now.getSeconds();
+		var deg = ((m * 60 + s) / 10) * Math.PI / 180;
+		ctx.rotate(deg);
+		ctx.beginPath();
+		ctx.arc(0, 0, 15, 0, Math.PI * 2);
+		ctx.moveTo(0, 15);
+		ctx.lineTo(0, 35);
+		ctx.moveTo(0, -15);
+		ctx.lineTo(0, -100);
+		ctx.closePath();
+		ctx.stroke();
+		ctx.restore();
+	}
+
+	/*Write Seconds*/
+	function Seconds() {
+		ctx.save();
+		var now = new Date();
+		ctx.rotate(Math.PI / 180 * 6);
+		var s = now.getSeconds();
+		ctx.rotate(Math.PI / 180 * 6 * s);
+		ctx.beginPath();
+		ctx.arc(0, 0, 15, 0, Math.PI * 2);
+		ctx.moveTo(0, 15);
+		ctx.lineTo(0, 55);
+		ctx.moveTo(0, -15);
+		ctx.lineTo(0, -120);
+		ctx.closePath();
+		ctx.stroke();
+		ctx.restore();
+	}
+
+	/*Write Line*/
+	var deg = 0;
+
+	function Line() {
+		if(deg == 360) {
+			deg = 0;
+		}
+		ctx.save();
+		ctx.rotate(-90 * Math.PI / 180);
+		ctx.beginPath();
+		ctx.arc(0, 0, 180, 0, Math.PI / 180 * deg);
+		ctx.moveTo(0, -180);
+		ctx.closePath();
+		ctx.stroke();
+		ctx.restore();
+		deg += 1;
+	}
+
+	/*Write Circle*/
+	function Circle() {
+		if(deg == 360) {
+			deg = 0;
+		}
+		ctx.save();
+		ctx.rotate(Math.PI / 180 * deg);
+		ctx.beginPath();
+		ctx.arc(0, -180, 10, 0, Math.PI * 2 * deg);
+		ctx.closePath();
+		ctx.fill();
+		ctx.restore();
+		deg += 1;
+	}
+
+	/*render 渲染*/
+	function render() {
+		ctx.clearRect(0, 0, 450, 450);
+		ctx.save();
+		ctx.translate(7.5 * 30, 7.5 * 30);
+		Clock();
+		Hours();
+		Minutes();
+		Seconds();
+		Line();
+		Circle();
+		ctx.restore();
+	}
+	render();
+	setInterval(render, 100);
+	
+	/*Write 五角星*/
+	function Star(x,y,a,b) {
+		ctx.save();
+		ctx.translate(x, y);
+		ctx.scale(a, b);
+		ctx.beginPath();
+		ctx.lineTo(0, -30);
+		ctx.lineTo(-4, -5);
+		ctx.lineTo(-20, -0);
+		ctx.lineTo(-7, 7);
+		ctx.lineTo(-10, 25);
+		ctx.lineTo(0, 10);
+		ctx.lineTo(10, 25);
+		ctx.lineTo(7, 7);
+		ctx.lineTo(20, 0);
+		ctx.lineTo(5, -5);
+		ctx.closePath();
+//		ctx.fillStyle = "#ffff00";
+//		ctx.fill();
+		ctx.stroke();
+		ctx.restore();
+	}
+	Star();
+/*render 渲染*/
+	function render() {
+		ctx.clearRect(0, 0, 450, 450);
+		ctx.save();
+		ctx.translate(7.5 * 30, 7.5 * 30);
+		for(var i = 0; i < 60; i++) {
+			var x = Math.floor(Math.random() * 450-225);
+			var y = Math.floor(Math.random() * 450-225);
+			var a = Math.random() + 1;
+			var b = Math.random() + 1;
+			Star(x, y, a, b);
+		}
+		Clock();
+		Hours();
+		Minutes();
+		Seconds();
+		Line();
+		Circle();
+		ctx.restore();
+	}
+
+	</script>
+	
+</html>
